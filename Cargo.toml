@@ -1,5 +1,5 @@
 [package]
-name = "wyag"
+name = "spit"
 version = "0.1.0"
 authors = ["Theodore Bauer <ted@commure.com>"]
 edition = "2018"

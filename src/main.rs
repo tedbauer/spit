@@ -3,10 +3,10 @@ extern crate ini;
 
 use clap::{App, Arg, SubCommand};
 use ini::Ini;
+use sha1::{Digest, Sha1};
 use std::ffi::OsStr;
 use std::fs;
 use std::path::PathBuf;
-use sha1::{Sha1, Digest};
 
 struct GitRepository {
     work_tree: PathBuf,
@@ -86,5 +86,11 @@ fn main() {
                 ),
         )
         .get_matches();
-    cmd_init(&PathBuf::from(matches.subcommand_matches("init").unwrap().value_of("dir").unwrap()));
+    cmd_init(&PathBuf::from(
+        matches
+            .subcommand_matches("init")
+            .unwrap()
+            .value_of("dir")
+            .unwrap(),
+    ));
 }
