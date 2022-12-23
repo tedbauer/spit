@@ -13,4 +13,5 @@ spit init testrepo
 cd testrepo
 echo "test content" > file1.txt
 spit hash-object file1.txt
+spit cat-file <file1 sha>
 ```

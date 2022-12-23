@@ -19,7 +19,7 @@ struct GitCommit {}
 struct GitTree {}
 struct GitTag {}
 struct GitBlob {
-    content: String
+    content: String,
 }
 
 enum GitObject {
@@ -33,7 +33,7 @@ impl GitObject {
     fn serialize(&self) -> String {
         match self {
             Self::GitBlob(b) => b.content.clone(),
-            _ => panic!("unimplemented")
+            _ => panic!("unimplemented"),
         }
     }
 
@@ -54,6 +54,18 @@ impl GitObject {
 const DEFAULT_REPO_DESCRIPTION: &str =
     "Unnamed repository; edit this file 'description' to name the repository.\n";
 const DEFAULT_HEAD: &str = "ref: refs/heads/master\n";
+
+fn cmd_cat_file(type_: &str, object_sha: &str) {
+    let object_content = fs::read_to_string(
+        PathBuf::from(".git")
+            .join("objects")
+            .join(object_sha[..2].to_string())
+            .join(object_sha[2..].to_string()),
+    )
+    .unwrap();
+
+    println!("{}", object_content);
+}
 
 fn object_write(object: &GitObject) {
     let object_data = object.serialize();
@@ -140,6 +152,10 @@ fn main() {
             Arg::with_name("write"),
             Arg::with_name("path"),
         ]))
+        .subcommand(
+            SubCommand::with_name("cat-file")
+                .args(&vec![Arg::with_name("type"), Arg::with_name("object")]),
+        )
         .get_matches();
 
     match matches.subcommand_name().as_deref() {
@@ -162,6 +178,18 @@ fn main() {
                 .subcommand_matches("hash-object")
                 .unwrap()
                 .value_of("type")
+                .unwrap(),
+        ),
+        Some("cat-file") => cmd_cat_file(
+            matches
+                .subcommand_matches("cat-file")
+                .unwrap()
+                .value_of("type")
+                .unwrap(),
+            matches
+                .subcommand_matches("cat-file")
+                .unwrap()
+                .value_of("object")
                 .unwrap(),
         ),
         Some(_) => println!("Command not recognized"),
